@@ -5,6 +5,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const logger = require("morgan");
 const userRouter = require("./router/user");
+const blogRouter = require("./router/blog");
 require("dotenv/config");
 
 app.use(logger("tiny"));
@@ -22,6 +23,7 @@ mongoose
 
 //routers
 app.use("/api/user", userRouter);
+app.use("/api/blog", blogRouter);
 
 app.listen(PORT, () => {
   console.log(`App is listening on ${PORT}`);
