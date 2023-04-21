@@ -2,6 +2,29 @@ const User = require("../model/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+//Get-User-Details
+const getUserDetails = async (req, res) => {
+  if (!req.user._id) {
+    return res.status(400).send("unAuthorized");
+  }
+  let user;
+  try {
+    user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(500).json({
+        message: "User not found!",
+      });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+  return res.status(200).json({
+    userDetails: {
+      user,
+    },
+  });
+};
+
 //Signup-user
 const signUp = async (req, res) => {
   const { name, password, number } = req.body;
@@ -111,4 +134,4 @@ const signIn = async (req, res) => {
   }
 };
 
-module.exports = { signUp, signIn };
+module.exports = { signUp, signIn, getUserDetails };
