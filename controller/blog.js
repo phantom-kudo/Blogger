@@ -91,22 +91,25 @@ const deleteBlogs = async (req, res) => {
       message: "Please provide blog id",
     });
   }
-  let blog;
   try {
-    blog = await Blog.findByIdAndRemove(blogId).populate("user");
-    await blog.user.userBlogs.pull(blog);
-    await blog.user.save();
+    const blog = await Blog.findByIdAndDelete(blogId);
+    if (!blog) {
+      res.status(500).json({
+        message: "No Blog exists",
+      });
+    }
+    await User.findByIdAndUpdate(req.user._id, {
+      $pull: { userBlogs: blogId },
+    });
+
+    res.status(200).json({
+      message: "Blog has been Deleted Successfully",
+    });
+    // await blog.user.userBlogs.pull(blog);
+    // await blog.user.save();
   } catch (err) {
     console.log(err);
   }
-  if (!blog) {
-    return res.status(500).json({
-      message: "No Blog exists",
-    });
-  }
-  return res.status(200).json({
-    message: "Blog has been Deleted Successfully",
-  });
 };
 
 //Get-Blogs-By-User-Id-with-pagination
